@@ -27,7 +27,7 @@ export default function WatchedShowsTimeline() {
   
   useEffect(() => {
     if (!isAuthenticated) {
-      //router.push('/');
+      router.push('/');
     }
   }, [isAuthenticated, router]);
 

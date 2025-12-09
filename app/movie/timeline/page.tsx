@@ -25,7 +25,7 @@ export default function WatchedMoviesTimeline() {
   const [error, setError] = useState('');
   const { username, isAuthenticated } = useAuth();
   const router = useRouter();
-  
+
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/');
@@ -93,7 +93,7 @@ export default function WatchedMoviesTimeline() {
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center">
         <div className="bg-red-500/20 border border-red-500 rounded-lg p-6 max-w-md">
           <p className="text-red-200 text-center">{error}</p>
-          <button 
+          <button
             onClick={fetchMovies}
             className="mt-4 w-full bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg transition"
           >

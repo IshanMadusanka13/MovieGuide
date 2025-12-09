@@ -41,7 +41,7 @@ export default function LoginPage() {
       }
 
       login(result.user.username);
-      router.push('/movie/timeline');
+      router.push('/home');
 
     } catch (err) {
       setError('An error occurred. Please try again.');
