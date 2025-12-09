@@ -2,7 +2,7 @@ import { Schema, model, models, Document } from 'mongoose';
 
 export interface IWatchedMovie extends Document {
   user_id: string;
-  movie_id: number;
+  id: number;
   watched_at: Date;
   createdAt?: Date;
   updatedAt?: Date;
@@ -14,7 +14,7 @@ const watchedMovieSchema = new Schema<IWatchedMovie>({
     required: true,
     index: true
   },
-  movie_id: {
+  id: {
     type: Number,
     required: true,
     index: true
@@ -27,7 +27,7 @@ const watchedMovieSchema = new Schema<IWatchedMovie>({
   timestamps: true
 });
 
-watchedMovieSchema.index({ user_id: 1, movie_id: 1 }, { unique: true });
+watchedMovieSchema.index({ user_id: 1, id: 1 }, { unique: true });
 
 const WatchedMovie = models.WatchedMovie || model<IWatchedMovie>('WatchedMovie', watchedMovieSchema, 'watched_movies');
 
