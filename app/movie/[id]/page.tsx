@@ -27,7 +27,7 @@ export default function MovieDetailsPage({ params }: PageProps) {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
   const [error, setError] = useState('');
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, initialized } = useAuth();
   const router = useRouter();
 
   const isThenable = (p: any): p is Promise<any> => p && typeof p.then === 'function';
@@ -35,17 +35,17 @@ export default function MovieDetailsPage({ params }: PageProps) {
   const resolvedParams = isThenable(params) ? (React as any).use(params) : params;
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
         console.log('Fetching movie details for ID:', resolvedParams?.id);
       fetchMovieDetails();
     }
-  }, [isAuthenticated, resolvedParams?.id]);
+  }, [initialized, isAuthenticated, resolvedParams?.id]);
 
   const fetchMovieDetails = async () => {
     try {

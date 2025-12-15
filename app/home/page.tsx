@@ -38,20 +38,20 @@ export default function HomePage() {
   const [stats, setStats] = useState<UserStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, initialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated && username) {
+    if (initialized && isAuthenticated && username) {
       fetchUserStats();
     }
-  }, [isAuthenticated, username]);
+  }, [initialized, isAuthenticated, username]);
 
   const fetchUserStats = async () => {
     try {

@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 interface AuthContextType {
   username: string | null;
   isAuthenticated: boolean;
+  initialized: boolean;
   login: (username: string) => void;
   logout: () => void;
 }
@@ -13,6 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [username, setUsername] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   // Load username from localStorage on mount
   useEffect(() => {
@@ -21,6 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUsername(savedUsername);
       setIsAuthenticated(true);
     }
+    setInitialized(true);
   }, []);
 
   const login = (username: string) => {
@@ -36,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ username, isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ username, isAuthenticated, initialized, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

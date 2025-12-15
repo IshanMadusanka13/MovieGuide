@@ -20,20 +20,20 @@ export default function DiscoverShowsPage() {
   const [error, setError] = useState('');
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, initialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
       fetchShows();
     }
-  }, [isAuthenticated, page]);
+  }, [initialized, isAuthenticated, page]);
 
   const fetchShows = async () => {
     try {

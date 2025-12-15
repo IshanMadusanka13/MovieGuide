@@ -22,20 +22,20 @@ export default function WatchedShowsTimeline() {
   const [episodesByDate, setEpisodesByDate] = useState<GroupedEpisodes>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, initialized } = useAuth();
   const router = useRouter();
   
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
       fetchEpisodes();
     }
-  }, [isAuthenticated]);
+  }, [initialized, isAuthenticated]);
 
   const fetchEpisodes = async () => {
     try {

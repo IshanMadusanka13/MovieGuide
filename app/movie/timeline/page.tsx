@@ -23,20 +23,20 @@ export default function WatchedMoviesTimeline() {
   const [moviesByDate, setMoviesByDate] = useState<GroupedMovies>({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, initialized } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
       fetchMovies();
     }
-  }, [isAuthenticated]);
+  }, [initialized, isAuthenticated]);
 
   const fetchMovies = async () => {
     try {

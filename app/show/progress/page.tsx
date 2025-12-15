@@ -23,20 +23,20 @@ export default function ShowProgressPage() {
   const [shows, setShows] = useState<ShowProgress[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const { username, isAuthenticated } = useAuth();
+  const { username, isAuthenticated, initialized } = useAuth();
   const router = useRouter();
   
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (initialized && isAuthenticated) {
       fetchShowProgress();
     }
-  }, [isAuthenticated]);
+  }, [initialized, isAuthenticated]);
 
   const fetchShowProgress = async () => {
     try {

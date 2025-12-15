@@ -23,14 +23,14 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, initialized } = useAuth();
   const router = useRouter();
 
   React.useEffect(() => {
-    if (!isAuthenticated) {
+    if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();

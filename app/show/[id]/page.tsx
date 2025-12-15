@@ -44,24 +44,24 @@ export default function ShowDetailsPage({ params }: PageProps) {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<{ [key: string]: boolean }>({});
     const [error, setError] = useState('');
-    const { username, isAuthenticated } = useAuth();
+    const { username, isAuthenticated, initialized } = useAuth();
     const router = useRouter();
 
     const isThenable = (p: any): p is Promise<any> => p && typeof p.then === 'function';
     const resolvedParams = isThenable(params) ? (React as any).use(params) : params;
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (initialized && !isAuthenticated) {
             router.push('/');
         }
-    }, [isAuthenticated, router]);
+    }, [initialized, isAuthenticated, router]);
 
     useEffect(() => {
-        if (isAuthenticated) {
+        if (initialized && isAuthenticated) {
             console.log('Fetching show details for ID:', resolvedParams?.id);
             fetchShowDetails();
         }
-    }, [isAuthenticated, resolvedParams?.id]);
+    }, [initialized, isAuthenticated, resolvedParams?.id]);
 
     const fetchShowDetails = async () => {
         try {
