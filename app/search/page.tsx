@@ -23,14 +23,64 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [searched, setSearched] = useState(false);
+  const [restored, setRestored] = React.useState(false);
   const { isAuthenticated, initialized } = useAuth();
   const router = useRouter();
+
+  const STORAGE_KEY = 'movieguide_search_state_v1';
+
+  const saveStateToStorage = React.useCallback(() => {
+    try {
+      const payload = {
+        searchType,
+        searchQuery,
+        results,
+        searched,
+        scrollY: typeof window !== 'undefined' ? window.scrollY : 0,
+      };
+      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (e) {
+      // ignore
+    }
+  }, [searchType, searchQuery, results, searched]);
+
+  const loadStateFromStorage = React.useCallback(() => {
+    try {
+      const raw = sessionStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        // mark as restored even if nothing to load to avoid overwriting stored state
+        setRestored(true);
+        return;
+      }
+      const data = JSON.parse(raw);
+      if (!data) {
+        setRestored(true);
+        return;
+      }
+      setSearchType(data.searchType || 'movie');
+      setSearchQuery(data.searchQuery || '');
+      setResults(data.results || []);
+      setSearched(Boolean(data.searched));
+      // restore scroll after render
+      if (typeof window !== 'undefined' && data.scrollY) {
+        requestAnimationFrame(() => window.scrollTo(0, data.scrollY));
+      }
+      setRestored(true);
+    } catch (e) {
+      setRestored(true);
+      // ignore
+    }
+  }, []);
 
   React.useEffect(() => {
     if (initialized && !isAuthenticated) {
       router.push('/');
     }
-  }, [initialized, isAuthenticated, router]);
+    // load persisted search state when auth is ready and user is authenticated
+    if (initialized && isAuthenticated && !restored) {
+      loadStateFromStorage();
+    }
+  }, [initialized, isAuthenticated, router, restored, loadStateFromStorage]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,6 +110,8 @@ export default function SearchPage() {
       }
 
       setResults(result.data);
+      // persist after successful search
+      setTimeout(() => saveStateToStorage(), 0);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
       setResults([]);
@@ -79,12 +131,21 @@ export default function SearchPage() {
   };
 
   const handleResultClick = (item: SearchResult) => {
+    // persist state and scroll position before navigation so back returns to same view
+    saveStateToStorage();
     if (searchType === 'movie') {
       router.push(`/movie/${item.id}`);
     } else {
       router.push(`/show/${item.id}`);
     }
   };
+
+  // persist whenever relevant state changes
+  React.useEffect(() => {
+    if (typeof window === 'undefined' || !restored) return;
+    // only persist after we've restored initial state to avoid wiping saved data
+    saveStateToStorage();
+  }, [searchQuery, searchType, results, searched, saveStateToStorage]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 py-12 px-4">
